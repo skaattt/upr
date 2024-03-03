@@ -33,12 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'patronymic',
             //'phone',
             //'email:email',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, User $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'username' => $model->username]);
-                 }
-            ],
+
+            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 

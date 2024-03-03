@@ -22,8 +22,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             'name',
             'tickets',
+            [
+            'format' => 'raw',
+            'label' => 'Забронировать',
+            'content' => function ($model){
+                if (Yii::$app->user->isGuest) return "Для бронирования авторизуйтесь";
+                return Html::a('Заказать билеты', ['view', 'id_poster' => $model->id_poster]);
+            }
+            ], 
+
+            ['class' => 'yii\grid\ActionColumn']
         ],
     ]); ?>
-
 
 </div>
