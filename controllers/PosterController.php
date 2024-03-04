@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Order;
 use app\models\Poster;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -90,6 +92,36 @@ class PosterController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+    public function actionOrder()
+    {
+        if (Yii::$app->user->isGuest){
+            return $this->redirect(['site/login']);
+        }
+
+
+
+        if (Yii::$app->request->post()){
+            $poster = Poster::findOne(Yii::$app->request->post()['id_poster']);
+            if ($poster->tickets<Yii::$app->request->post()['tickets']){
+                Yii::$app->session->setFlash('danger', 'Невозможно заказать билеты');
+                return $this->redirect(['view', 'id_poster' => $poster->id_poster]);
+            }
+            
+            $poster->tickets = $poster->tickets - Yii::$app->request->post()['tickets'];
+            $poster->save();
+
+            $model = new Order();
+            $model->username=Yii::$app->user->identity->username;
+            $model->id_poster=Yii::$app->request->post()['id_poster'];
+            $model->tickets=Yii::$app->request->post()['tickets'];
+            $model->save();
+            Yii::$app->session->setFlash('success', 'Билеты заказаны');
+            return $this->redirect(['index']);
+        }
+
+        var_dump(Yii::$app->request->post());
     }
 
     /**
